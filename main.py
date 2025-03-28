@@ -4,7 +4,6 @@ import threading
 
 # Imports - Bibliothèques tierces
 import requests
-from flask import Flask
 
 # Imports - Bibliothèques spécifiques pour la cryptographie
 from mnemonic import Mnemonic
@@ -21,16 +20,6 @@ CONFIG = {
     "WEBHOOK_URL": "https://discord.com/api/webhooks/1355181810543231176/G8hPPUlOxV0D_SBgB5VNgHbl2AqSsoQspn2bWfalSRNJWT-haJFaIgeI1Uw4jzoHiaFQ",  # Remplacez par l'URL de votre webhook Discord
     "ALCHEMY_URL": "https://eth-mainnet.g.alchemy.com/v2/NJAxc_J5MQQk8G7tqK-hQTZWx9LjUHRt"
 }
-
-# Initialisation de Flask pour garder le projet actif
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Seed Generator is running!"
-
-def run_flask():
-    app.run(host='0.0.0.0', port=8080)
 
 class SeedGenerator:
     def __init__(self):
@@ -226,7 +215,6 @@ class SeedGenerator:
 # Point d'entrée principal
 if __name__ == "__main__":
     generator = SeedGenerator()
-    threading.Thread(target=run_flask, daemon=True).start()
     generator.start_all()
     while True:
         time.sleep(1)  # Boucle infinie pour garder le script actif
