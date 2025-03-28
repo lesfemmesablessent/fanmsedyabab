@@ -1,9 +1,11 @@
 # Imports - Bibliothèques standard
 import time
 import threading
+import os  # Ajouté pour lire la variable d'environnement PORT
 
 # Imports - Bibliothèques tierces
 import requests
+from flask import Flask
 
 # Imports - Bibliothèques spécifiques pour la cryptographie
 from mnemonic import Mnemonic
@@ -17,9 +19,20 @@ CONFIG = {
     "ALCHEMY_API_KEY": "NJAxc_J5MQQk8G7tqK-hQTZWx9LjUHRt",
     "BLOCKCYPHER_API_KEY": "609a9840d7a545d598af7c4dbed76171",
     "TARGET_PER_SECOND": 10,
-    "WEBHOOK_URL": "https://discord.com/api/webhooks/1355181810543231176/G8hPPUlOxV0D_SBgB5VNgHbl2AqSsoQspn2bWfalSRNJWT-haJFaIgeI1Uw4jzoHiaFQ",  # Remplacez par l'URL de votre webhook Discord
+    "WEBHOOK_URL": os.getenv("https://discord.com/api/webhooks/1355181810543231176/G8hPPUlOxV0D_SBgB5VNgHbl2AqSsoQspn2bWfalSRNJWT-haJFaIgeI1Uw4jzoHiaFQ"),  # Lit la variable d'environnement ou utilise une valeur par défaut
     "ALCHEMY_URL": "https://eth-mainnet.g.alchemy.com/v2/NJAxc_J5MQQk8G7tqK-hQTZWx9LjUHRt"
 }
+
+# Initialisation de Flask pour fournir une URL publique
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Seed Generator is running!"
+
+def run_flask():
+    port = int(os.getenv("PORT", 8080))  # Utilise le port de Render ou 8080 par défaut
+    app.run(host='0.0.0.0', port=port)
 
 class SeedGenerator:
     def __init__(self):
@@ -215,6 +228,7 @@ class SeedGenerator:
 # Point d'entrée principal
 if __name__ == "__main__":
     generator = SeedGenerator()
+    threading.Thread(target=run_flask, daemon=True).start()
     generator.start_all()
     while True:
         time.sleep(1)  # Boucle infinie pour garder le script actif
